@@ -1,0 +1,36 @@
+import 'package:app/env.dart';
+import 'package:app/presentation/pages/signin.dart';
+import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
+class Home extends StatelessWidget {
+  const Home({super.key});
+
+  static final GoogleSignIn _googleSignIn =
+      GoogleSignIn(scopes: ['email', 'profile'], clientId: CLIENT_ID);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+          child: ElevatedButton(
+              onPressed: () => signin(context),
+              child: const Text("Sign in with Google"))),
+    );
+  }
+
+  void signin(BuildContext context) async {
+    print("Signing in");
+
+    try {
+      GoogleSignInAccount? user = await _googleSignIn.signIn();
+
+      print("::: User is $user");
+    } catch (e) {
+      print("Error is $e");
+    }
+
+    // Navigator.push(
+    //     context, MaterialPageRoute(builder: (context) => const SigninPage()));
+  }
+}
