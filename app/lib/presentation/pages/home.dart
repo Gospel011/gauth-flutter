@@ -7,15 +7,28 @@ class Home extends StatelessWidget {
   const Home({super.key});
 
   static final GoogleSignIn _googleSignIn =
-      GoogleSignIn(scopes: ['email', 'profile'], clientId: CLIENT_ID);
+      GoogleSignIn(scopes: ['email', 'profile', 'openid'], serverClientId: SERVER_CLIENT_ID);
+
+  // static final GoogleSignIn _googleSignIn =
+  //     GoogleSignIn(scopes: ['email', 'profile', 'openid']);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-          child: ElevatedButton(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              ElevatedButton(
               onPressed: () => signin(context),
-              child: const Text("Sign in with Google"))),
+              child: const Text("Sign in with Google")),
+
+              // signout
+              ElevatedButton(
+              onPressed: _googleSignIn.signOut,
+              child: const Text("Signout"))
+            ],
+          )),
     );
   }
 
@@ -24,6 +37,21 @@ class Home extends StatelessWidget {
 
     try {
       GoogleSignInAccount? user = await _googleSignIn.signIn();
+
+      GoogleSignInAuthentication auth =
+          await _googleSignIn.currentUser!.authentication;
+
+      var accessToken = auth.accessToken;
+      var idToken = auth.idToken;
+
+      print("Access token: $accessToken\nidToken: $idToken");
+
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+                title: Text("success"), content: Text(user.toString()));
+          });
 
       print("::: User is $user");
     } catch (e) {
